@@ -1,0 +1,24 @@
+name: Telegram Bot
+on:
+  schedule:
+    - cron: 0 * * * *
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.9'
+      - name: Install dependencies
+        run: |
+          pip install aiogram requests beautifulsoup4
+      - name: Run the bot
+        env:
+          API_TOKEN: ${{ secrets.API_TOKEN }}
+          STUDOCU_USERNAME: ${{ secrets.STUDOCU_USERNAME }}
+          STUDOCU_PASSWORD: ${{ secrets.STUDOCU_PASSWORD }}
+        run: |
+          python main.py
