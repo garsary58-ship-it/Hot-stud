@@ -14,7 +14,7 @@ jobs:
           python-version: '3.9'
       - name: Install dependencies
         run: |
-          pip install aiogram requests beautifulsoup4
+          pip install -r requirements.txt
       - name: Run the bot
         env:
           API_TOKEN: ${{ secrets.API_TOKEN }}
@@ -22,3 +22,4 @@ jobs:
           STUDOCU_PASSWORD: ${{ secrets.STUDOCU_PASSWORD }}
         run: |
           python main.py
+        working-directory: ./bot
