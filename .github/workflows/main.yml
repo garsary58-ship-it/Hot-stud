@@ -18,7 +18,7 @@ jobs:
       - name: Run the bot
         env:
           API_TOKEN: ${{ secrets.API_TOKEN }}
-          STUDOCU_USERNAME: ${{ secrets.STUDOCU_USERNAME }}
+          STUDOCU_EMAIL: ${{ secrets.STUDOCU_EMAIL }}
           STUDOCU_PASSWORD: ${{ secrets.STUDOCU_PASSWORD }}
         run: |
           python main.py
