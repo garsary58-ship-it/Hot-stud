@@ -1,8 +1,7 @@
 name: Telegram Bot
 on:
-  push:
-    branches:
-      - main
+  schedule:
+    - cron: 0 * * * *
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -23,4 +22,3 @@ jobs:
           STUDOCU_PASSWORD: ${{ secrets.STUDOCU_PASSWORD }}
         run: |
           python main.py
-        working-directory: ./
