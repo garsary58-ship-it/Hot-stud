@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 import pdfkit
 import os
 API_TOKEN = os.environ['API_TOKEN']
-STUDOCU_USERNAME = os.environ['STUDOCU_USERNAME']
+STUDOCU_EMAIL = os.environ['STUDOCU_EMAIL']
 STUDOCU_PASSWORD = os.environ['STUDOCU_PASSWORD']
 bot = Bot(token=API_TOKEN)
 dp = Dispatcher(bot)
@@ -19,32 +19,36 @@ async def handle_link(message: types.Message):
         try:
             # Send a message to the user to wait
             await message.reply("Downloading PDF file...")
-            # Login to Studocu using your premium account credentials
+            # Login to Studocu using your email and password
             session = requests.Session()
             login_url = 'https://www.studocu.com/login'
             login_data = {
-                'username': STUDOCU_USERNAME,
+                'email': STUDOCU_EMAIL,
                 'password': STUDOCU_PASSWORD
             }
-            session.post(login_url, data=login_data)
-            # Get the PDF file link
-            response = session.get(link)
-            soup = BeautifulSoup(response.content, 'html.parser')
-            pdf_link = None
-            for a in soup.find_all('a', href=True):
-                if a['href'].endswith('.pdf'):
-                    pdf_link = 'https://www.studocu.com' + a['href']
-                    break
-            # Download the PDF file
-            if pdf_link:
-                pdf_response = session.get(pdf_link)
-                with open('document.pdf', 'wb') as file:
-                    file.write(pdf_response.content)
-                # Send the PDF file to the user
-                with open('document.pdf', 'rb') as file:
-                    await message.reply_document(file)
+            response = session.post(login_url, data=login_data)
+            # Check if the login was successful
+            if response.status_code == 200:
+                # Get the PDF file link
+                response = session.get(link)
+                soup = BeautifulSoup(response.content, 'html.parser')
+                pdf_link = None
+                for a in soup.find_all('a', href=True):
+                    if a['href'].endswith('.pdf'):
+                        pdf_link = 'https://www.studocu.com' + a['href']
+                        break
+                # Download the PDF file
+                if pdf_link:
+                    pdf_response = session.get(pdf_link)
+                    with open('document.pdf', 'wb') as file:
+                        file.write(pdf_response.content)
+                    # Send the PDF file to the user
+                    with open('document.pdf', 'rb') as file:
+                        await message.reply_document(file)
+                else:
+                    await message.reply("PDF file not found.")
             else:
-                await message.reply("PDF file not found.")
+                await message.reply("Failed to login to Studocu.")
         except Exception as e:
             await message.reply("Error downloading PDF file: " + str(e))
     else:
